@@ -1,6 +1,6 @@
 ﻿module Day2
 
-let testOne =
+let test =
     "A Y
 B X
 C Z"
@@ -9,6 +9,11 @@ type Throw =
     | Rock
     | Paper
     | Scissors
+
+type RoundFinish =
+    | Lose
+    | Draw
+    | Win
 
 let calculateScore throw =
     let win = 6
@@ -43,18 +48,62 @@ let calculateAllScores throws =
 
     snd result
 
-let nameThrows lines : seq<Throw * Throw> =
+let matchThrowToResult (throwResult: Throw * RoundFinish) : Throw * Throw =
+    throwResult
+    |> function
+        | Rock, Lose -> Rock, Scissors
+        | Rock, Draw -> Rock, Rock
+        | Rock, Win -> Rock, Paper
+        | Paper, Lose -> Paper, Rock
+        | Paper, Draw -> Paper, Paper
+        | Paper, Win -> Paper, Scissors
+        | Scissors, Lose -> Scissors, Paper
+        | Scissors, Draw -> Scissors, Scissors
+        | Scissors, Win -> Scissors, Rock
+
+let nameThrowsStarOne lines : seq<Throw * Throw> =
     let matchThrow throw =
-        match throw with
-        | 'A'
-        | 'X' -> Rock
-        | 'B'
-        | 'Y' -> Paper
-        | 'C'
-        | 'Z' -> Scissors
-        | _ -> failwith $"Invalid input {throw}"
+        throw
+        |> function
+            | 'A'
+            | 'X' -> Rock
+            | 'B'
+            | 'Y' -> Paper
+            | 'C'
+            | 'Z' -> Scissors
+            | _ -> failwith $"Invalid input {throw}"
 
     seq {
         for line in (lines: string []) do
             yield (matchThrow line[0], matchThrow line[2])
     }
+
+let nameThrowsStarTwo lines : seq<Throw * RoundFinish> =
+    // In this case, instead of knowing what the second throw is, we know what the finish should be.
+    // Then we just match up the throw with what the throw should be and do the same thing as before.
+
+    let matchThrow throw =
+        throw
+        |> function
+            | 'A' -> Rock
+            | 'B' -> Paper
+            | 'C' -> Scissors
+            | _ -> failwith "Invalid input"
+
+    let matchResult result =
+        result
+        |> function
+            | 'X' -> Lose
+            | 'Y' -> Draw
+            | 'Z' -> Win
+            | _ -> failwith "Invalid input"
+
+    seq {
+        for line in (lines: string []) do
+            yield (matchThrow line[0], matchResult line[2])
+    }
+
+let calculateScoreStarTwo lines =
+    nameThrowsStarTwo lines
+    |> Seq.map matchThrowToResult
+    |> calculateAllScores

@@ -10,8 +10,8 @@ let main args =
     //let lines = Day2.testOne.Split("\n")
 
     let result =
-        Day2.nameThrows lines |> Day2.calculateAllScores
-        
+        Day2.calculateScoreStarTwo lines
+
     printfn $"{result}"
 
     0
