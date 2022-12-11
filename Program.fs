@@ -1,34 +1,30 @@
 ﻿open System
 open System.IO
 
-let rec createElfSupplies (lines: list<string>) (acc: list<int>) : list<list<int>> =
-    match lines with
-    | [] -> []
-    | value :: _ when String.IsNullOrWhiteSpace(value) -> (createElfSupplies (List.tail lines) List.empty) @ [ acc ]
-    | _ -> createElfSupplies (List.tail lines) (acc @ [ int (List.head lines) ])
+let createElfSupplies (lines: string []) =
+    seq {
+        let tempCalories = ResizeArray<int>()
 
-let elfSuppliesMax lines =
-    
-    createElfSupplies lines []
-    |> List.map List.sum
-    |> List.max
+        for line in lines do
+            if String.IsNullOrWhiteSpace(line) then
+                yield Seq.sum tempCalories
+                tempCalories.Clear()
+            else
+                tempCalories.Add(int line)
+    }
+
+let elfSuppliesMax lines = createElfSupplies lines |> Seq.max
 
 let elfSuppliesTopThree lines =
-    
-    createElfSupplies lines []
-    |> List.map List.sum
-    |> List.toArray
-    |> Array.sortDescending
-    |> Array.take 3
-    |> Array.sum
+    createElfSupplies lines
+    |> Seq.sortDescending
+    |> Seq.take 3
+    |> Seq.sum
 
 [<EntryPoint>]
 let main args =
     let lines =
-        File.ReadAllText("C:\Users\marku\Code\F#\Advent2022\elf_calories.txt")
-        |> (fun lines -> Seq.append lines "\n" |> String.Concat)
-        |> (fun lines -> lines.Split("\n"))
-        |> Seq.toList
-        
+        File.ReadAllLines("C:\Users\marku\Code\F#\Advent2022\elf_calories.txt")
+
     printfn $"{elfSuppliesTopThree lines}"
     0
