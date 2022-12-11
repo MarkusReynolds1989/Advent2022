@@ -5,6 +5,9 @@ let test =
 B X
 C Z"
 
+let path =
+    "C:\Users\marku\Code\F#\Advent2022\Data\day_2.txt"
+
 type Throw =
     | Rock
     | Paper
@@ -34,6 +37,19 @@ let calculateScore throw =
     | Scissors, Paper -> loss + paperBonus
     | Scissors, Scissors -> tie + scissorsBonus
 
+let matchThrowToRoundResult (throwAndRoundResult: Throw * RoundResult) : Throw * Throw =
+    throwAndRoundResult
+    |> function
+        | Rock, Lose -> Rock, Scissors
+        | Rock, Draw -> Rock, Rock
+        | Rock, Win -> Rock, Paper
+        | Paper, Lose -> Paper, Rock
+        | Paper, Draw -> Paper, Paper
+        | Paper, Win -> Paper, Scissors
+        | Scissors, Lose -> Scissors, Paper
+        | Scissors, Draw -> Scissors, Scissors
+        | Scissors, Win -> Scissors, Rock
+
 // Memoize all throws here to make the work quicker.
 let calculateAllScores throws =
     // There are very few correct states, so the memoization will be extremely fast for this problem.
@@ -47,19 +63,6 @@ let calculateAllScores throws =
             throws
 
     snd result
-
-let matchThrowToRoundResult (throwAndRoundResult: Throw * RoundResult) : Throw * Throw =
-    throwAndRoundResult
-    |> function
-        | Rock, Lose -> Rock, Scissors
-        | Rock, Draw -> Rock, Rock
-        | Rock, Win -> Rock, Paper
-        | Paper, Lose -> Paper, Rock
-        | Paper, Draw -> Paper, Paper
-        | Paper, Win -> Paper, Scissors
-        | Scissors, Lose -> Scissors, Paper
-        | Scissors, Draw -> Scissors, Scissors
-        | Scissors, Win -> Scissors, Rock
 
 let nameThrowsStarOne lines : seq<Throw * Throw> =
     let matchThrow throw =
