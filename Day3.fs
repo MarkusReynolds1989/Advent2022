@@ -58,7 +58,7 @@ let calculateCommonPriorities (rucksacks: seq<seq<int> * seq<int>>) =
         |> Set.toArray
         |> (fun value -> value[0]))
 
-let SumPrioritiesOfIntersections lines =
+let sumPrioritiesOfIntersections lines =
     parseRucksackContents lines
     |> parseRucksackContentsToPriorities
     |> calculateCommonPriorities
