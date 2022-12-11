@@ -18,6 +18,10 @@ let lowerLetters = [ 'a' .. 'z' ]
 let upperLetters = [ 'A' .. 'Z' ]
 let letters = lowerLetters @ upperLetters
 
+// It would be better if we could just convert the characters to ascii without having to use a lookup table, however
+// there are a lot of problems with taking that approach.
+// First off, what if the characters we get are unicode? UTF-8 maps the letters to ASCII usually correctly.
+// When I tried to do that here, it didn't work.
 let lettersTable =
     List.fold
         (fun acc value ->
