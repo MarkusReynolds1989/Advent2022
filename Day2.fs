@@ -10,7 +10,7 @@ type Throw =
     | Paper
     | Scissors
 
-type RoundFinish =
+type RoundResult =
     | Lose
     | Draw
     | Win
@@ -48,8 +48,8 @@ let calculateAllScores throws =
 
     snd result
 
-let matchThrowToResult (throwResult: Throw * RoundFinish) : Throw * Throw =
-    throwResult
+let matchThrowToRoundResult (throwAndRoundResult: Throw * RoundResult) : Throw * Throw =
+    throwAndRoundResult
     |> function
         | Rock, Lose -> Rock, Scissors
         | Rock, Draw -> Rock, Rock
@@ -78,7 +78,7 @@ let nameThrowsStarOne lines : seq<Throw * Throw> =
             yield (matchThrow line[0], matchThrow line[2])
     }
 
-let nameThrowsStarTwo lines : seq<Throw * RoundFinish> =
+let nameThrowsStarTwo lines : seq<Throw * RoundResult> =
     // In this case, instead of knowing what the second throw is, we know what the finish should be.
     // Then we just match up the throw with what the throw should be and do the same thing as before.
 
@@ -90,8 +90,8 @@ let nameThrowsStarTwo lines : seq<Throw * RoundFinish> =
             | 'C' -> Scissors
             | _ -> failwith "Invalid input"
 
-    let matchResult result =
-        result
+    let matchRoundResult roundResult =
+        roundResult
         |> function
             | 'X' -> Lose
             | 'Y' -> Draw
@@ -100,10 +100,13 @@ let nameThrowsStarTwo lines : seq<Throw * RoundFinish> =
 
     seq {
         for line in (lines: string []) do
-            yield (matchThrow line[0], matchResult line[2])
+            yield (matchThrow line[0], matchRoundResult line[2])
     }
+
+let calculateScoreStarOne lines =
+    nameThrowsStarOne lines |> calculateAllScores
 
 let calculateScoreStarTwo lines =
     nameThrowsStarTwo lines
-    |> Seq.map matchThrowToResult
+    |> Seq.map matchThrowToRoundResult
     |> calculateAllScores
