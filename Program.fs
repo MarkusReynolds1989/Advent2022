@@ -5,7 +5,13 @@ open System.IO
 [<EntryPoint>]
 let main args =
     let lines =
-        File.ReadAllLines("C:\Users\marku\Code\F#\Advent2022\elf_calories.txt")
+        File.ReadAllLines("C:\Users\marku\Code\F#\Advent2022\Data\day_2.txt")
 
-    printfn $"{Day1.elfSuppliesTopThree lines}"
+    //let lines = Day2.testOne.Split("\n")
+
+    let result =
+        Day2.nameThrows lines |> Day2.calculateAllScores
+        
+    printfn $"{result}"
+
     0

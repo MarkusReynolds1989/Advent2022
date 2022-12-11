@@ -9,7 +9,8 @@
         <Compile Include="Day1.fs" />
         <Compile Include="Day2.fs" />
         <Compile Include="Program.fs" />
-        <Content Include="elf_calories.txt" />
+        <Content Include="Data\elf_calories.txt" />
+        <Content Include="Data\day_2.txt" />
     </ItemGroup>
 
 </Project>

@@ -2,6 +2,9 @@
 
 open System
 
+let filePath =
+    "C:\Users\marku\Code\F#\Advent2022\Data\elf_calories.txt"
+
 let createElfSupplies (lines: string []) =
     seq {
         let tempCalories = ResizeArray<int>()
