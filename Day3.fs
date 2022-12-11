@@ -11,6 +11,7 @@ wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
 ttgJtRGJQctTZtZT
 CrZsJsPPZsGzwwsLwLmpwMDw"
 
+// Common
 let lowerLetters = [ 'a' .. 'z' ]
 let upperLetters = [ 'A' .. 'Z' ]
 let letters = lowerLetters @ upperLetters
@@ -31,6 +32,7 @@ let lettersTable =
     |> snd
     |> Map.ofList
 
+// Star 1
 let parseRucksackContents (lines: string []) : seq<string * string> =
     seq {
         for line in lines do
@@ -39,25 +41,6 @@ let parseRucksackContents (lines: string []) : seq<string * string> =
             let length = line.Length
             (line.Substring(0, half), line.Substring(half, length - half))
     }
-
-let parseRucksackContentsChunk (lines: string []) =
-    lines
-    |> Seq.map (fun line -> line.ReplaceLineEndings())
-    |> Seq.chunkBySize 3
-
-let parseRucksackContentsToPrioritiesByChunk (rucksacks: seq<string []>) =
-    let lookupPriority value = Map.find value lettersTable
-
-    rucksacks
-    |> Seq.map (fun rucksack ->
-        seq {
-            yield rucksack[0] |> Seq.map lookupPriority
-            yield rucksack[1] |> Seq.map lookupPriority
-            yield rucksack[2] |> Seq.map lookupPriority
-        }
-        |> Seq.map Set.ofSeq
-        |> Set.intersectMany
-        |> (fun result -> result |> Set.toArray |> (fun value -> value[0])))
 
 let parseRucksackContentsToPriorities (rucksacks: seq<string * string>) : seq<seq<int> * seq<int>> =
     rucksacks
@@ -83,6 +66,26 @@ let sumPrioritiesOfIntersections lines =
     |> parseRucksackContentsToPriorities
     |> calculateCommonPriorities
     |> Seq.sum
+
+// Star 2
+let parseRucksackContentsChunk (lines: string []) =
+    lines
+    |> Seq.map (fun line -> line.ReplaceLineEndings())
+    |> Seq.chunkBySize 3
+
+let parseRucksackContentsToPrioritiesByChunk (rucksacks: seq<string []>) =
+    let lookupPriority value = Map.find value lettersTable
+
+    rucksacks
+    |> Seq.map (fun rucksack ->
+        seq {
+            yield rucksack[0] |> Seq.map lookupPriority
+            yield rucksack[1] |> Seq.map lookupPriority
+            yield rucksack[2] |> Seq.map lookupPriority
+        }
+        |> Seq.map Set.ofSeq
+        |> Set.intersectMany
+        |> (fun result -> result |> Set.toArray |> (fun value -> value[0])))
 
 let sumPrioritiesOfIntersectionsByChunk lines =
     parseRucksackContentsChunk lines
