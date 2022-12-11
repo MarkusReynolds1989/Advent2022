@@ -33,16 +33,14 @@ let calculateScore throw =
 let calculateAllScores throws =
     let result =
         Seq.fold
-            (fun (state: Map<Throw * Throw, int>) (throw: Throw * Throw) ->
-                match Map.containsKey throw state with
-                | true -> state
-                | _ -> Map.add throw (calculateScore throw) state)
-            Map.empty
+            (fun (state: Map<Throw * Throw, int> * int) (throw: Throw * Throw) ->
+                match Map.containsKey throw (fst state) with
+                | true -> (fst state, (snd state) + Map.find throw (fst state))
+                | _ -> (Map.add throw (calculateScore throw) (fst state)), ((snd state) + (calculateScore throw)))
+            (Map.empty, 0)
             throws
 
-    throws
-    |> Seq.map (fun throw -> Map.find throw result)
-    |> Seq.sum
+    snd result
 
 let nameThrows lines : seq<Throw * Throw> =
     let matchThrow throw =
