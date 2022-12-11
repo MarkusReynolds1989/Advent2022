@@ -1,8 +1,5 @@
 ﻿module Day3
 
-open System
-open System.Text
-
 let path =
     "C:\Users\marku\Code\F#\Advent2022\Data\day_3.txt"
 
