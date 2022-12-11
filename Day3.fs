@@ -3,7 +3,9 @@
 open System
 open System.Text
 
-let path = "C:\Users\marku\Code\F#\Advent2022\Data\day_3.txt"
+let path =
+    "C:\Users\marku\Code\F#\Advent2022\Data\day_3.txt"
+
 let test =
     "vJrwpWtwJgWrhcsFMMfFFhFp
 jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
@@ -56,7 +58,7 @@ let calculateCommonPriorities (rucksacks: seq<seq<int> * seq<int>>) =
         |> Set.toArray
         |> (fun value -> value[0]))
 
-let calculatePrioritiesOfUnions lines =
+let SumPrioritiesOfIntersections lines =
     parseRucksackContents lines
     |> parseRucksackContentsToPriorities
     |> calculateCommonPriorities
