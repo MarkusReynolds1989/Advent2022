@@ -31,6 +31,7 @@ let calculateScore throw =
 
 // Memoize all throws here to make the work quicker.
 let calculateAllScores throws =
+    // There are very few correct states, so the memoization will be extremely fast for this problem.
     let result =
         Seq.fold
             (fun (state: Map<Throw * Throw, int> * int) (throw: Throw * Throw) ->
