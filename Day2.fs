@@ -8,6 +8,14 @@ C Z"
 let path =
     "C:\Users\marku\Code\F#\Advent2022\Data\day_2.txt"
 
+// Constants
+let win = 6
+let tie = 3
+let loss = 0
+let scissorsBonus = 3
+let paperBonus = 2
+let rockBonus = 1
+
 type Throw =
     | Rock
     | Paper
@@ -19,13 +27,6 @@ type RoundResult =
     | Win
 
 let calculateScore throw =
-    let win = 6
-    let tie = 3
-    let loss = 0
-    let scissorsBonus = 3
-    let paperBonus = 2
-    let rockBonus = 1
-
     match throw with
     | Rock, Rock -> tie + rockBonus
     | Rock, Paper -> win + paperBonus
