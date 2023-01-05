@@ -1,11 +1,11 @@
 ﻿module Program
+open System
 open System.IO
 
 [<EntryPoint>]
 let main args =
 
-    let lines = File.ReadAllLines(Day3.path)
-    //let lines = Day3.test.Split("\n")
-    printfn $"%A{Day3.sumPrioritiesOfIntersections lines}"
-    printfn $"{Day3.sumPrioritiesOfIntersectionsByChunk lines}"
+    let lines = File.ReadAllLines(Day4.path)
+    let test = Day4.test.Split("\n") 
+    Console.WriteLine($"{Day4.calculateContainingPairs lines}")
     0
