@@ -1,11 +1,11 @@
-﻿module Day1
+﻿[<RequireQualifiedAccess>]
+module Day1
 
 open System
 
-let filePath =
-    "C:\Users\marku\Code\F#\Advent2022\Data\elf_calories.txt"
+let filePath = "Data/elf_calories.txt"
 
-let createElfSupplies (lines: string []) =
+let createElfSupplies (lines: string[]) =
     seq {
         let tempCalories = ResizeArray<int>()
 
@@ -20,7 +20,4 @@ let createElfSupplies (lines: string []) =
 let elfSuppliesMax lines = createElfSupplies lines |> Seq.max
 
 let elfSuppliesTopThree lines =
-    createElfSupplies lines
-    |> Seq.sortDescending
-    |> Seq.take 3
-    |> Seq.sum
+    createElfSupplies lines |> Seq.sortDescending |> Seq.take 3 |> Seq.sum

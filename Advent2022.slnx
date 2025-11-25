@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Implementations/Advent2022.fsproj" />
+  <Project Path="Testing/Testing.fsproj" />
+</Solution>

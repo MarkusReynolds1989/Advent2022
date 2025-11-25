@@ -3,7 +3,7 @@
 open System
 open System.IO
 
-let path = "C:\Users\marku\Code\F#\Advent2022\Data\day_4.txt"
+let path = "day_4.txt"
 let lines = File.ReadAllLines(path)
 
 

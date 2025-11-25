@@ -1,7 +1,6 @@
 ﻿module Day3
 
-let path =
-    "C:\Users\marku\Code\F#\Advent2022\Data\day_3.txt"
+let path = "day_3.txt"
 
 let test =
     "vJrwpWtwJgWrhcsFMMfFFhFp

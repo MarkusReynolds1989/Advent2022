@@ -5,8 +5,7 @@ let test =
 B X
 C Z"
 
-let path =
-    "C:\Users\marku\Code\F#\Advent2022\Data\day_2.txt"
+let path = "day_2.txt"
 
 // Constants
 let win = 6
