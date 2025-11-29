@@ -77,7 +77,7 @@ let nameThrowsStarOne lines : seq<Throw * Throw> =
             | _ -> failwith $"Invalid input {throw}"
 
     seq {
-        for line in (lines: string []) do
+        for line in (lines: string[]) do
             yield (matchThrow line[0], matchThrow line[2])
     }
 
@@ -102,7 +102,7 @@ let nameThrowsStarTwo lines : seq<Throw * RoundResult> =
             | _ -> failwith "Invalid input"
 
     seq {
-        for line in (lines: string []) do
+        for line in (lines: string[]) do
             yield (matchThrow line[0], matchRoundResult line[2])
     }
 
@@ -110,6 +110,4 @@ let calculateScoreStarOne lines =
     nameThrowsStarOne lines |> calculateAllScores
 
 let calculateScoreStarTwo lines =
-    nameThrowsStarTwo lines
-    |> Seq.map matchThrowToRoundResult
-    |> calculateAllScores
+    nameThrowsStarTwo lines |> Seq.map matchThrowToRoundResult |> calculateAllScores

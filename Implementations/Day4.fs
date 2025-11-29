@@ -21,8 +21,8 @@ let generatePairs (lines: string[]) =
     Array.map
         (fun (line: string) ->
             let pairs = line.Split(",")
-            let firstPair = pairs[ 0 ].Split("-")
-            let secondPair = pairs[ 1 ].Split("-")
+            let firstPair = pairs[0].Split("-")
+            let secondPair = pairs[1].Split("-")
 
             ({ X = int firstPair[0]
                Y = int firstPair[1] },

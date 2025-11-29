@@ -32,7 +32,7 @@ let lettersTable =
     |> Map.ofList
 
 // Star 1
-let parseRucksackContents (lines: string []) : seq<string * string> =
+let parseRucksackContents (lines: string[]) : seq<string * string> =
     seq {
         for line in lines do
             let line = line.ReplaceLineEndings()
@@ -44,10 +44,8 @@ let parseRucksackContents (lines: string []) : seq<string * string> =
 let parseRucksackContentsToPriorities (rucksacks: seq<string * string>) : seq<seq<int> * seq<int>> =
     rucksacks
     |> Seq.map (fun rucksack ->
-        ((fst rucksack)
-         |> Seq.map (fun value -> Map.find value lettersTable),
-         (snd rucksack)
-         |> Seq.map (fun value -> Map.find value lettersTable)))
+        ((fst rucksack) |> Seq.map (fun value -> Map.find value lettersTable),
+         (snd rucksack) |> Seq.map (fun value -> Map.find value lettersTable)))
 
 let calculateCommonPriorities (rucksacks: seq<seq<int> * seq<int>>) =
     rucksacks
@@ -56,9 +54,7 @@ let calculateCommonPriorities (rucksacks: seq<seq<int> * seq<int>>) =
         let firstRuck = firstRuck |> Set.ofSeq
         let secondRuck = secondRuck |> Set.ofSeq
 
-        Set.intersect firstRuck secondRuck
-        |> Set.toArray
-        |> (fun value -> value[0]))
+        Set.intersect firstRuck secondRuck |> Set.toArray |> (fun value -> value[0]))
 
 let sumPrioritiesOfIntersections lines =
     parseRucksackContents lines
@@ -67,12 +63,10 @@ let sumPrioritiesOfIntersections lines =
     |> Seq.sum
 
 // Star 2
-let parseRucksackContentsChunk (lines: string []) =
-    lines
-    |> Seq.map (fun line -> line.ReplaceLineEndings())
-    |> Seq.chunkBySize 3
+let parseRucksackContentsChunk (lines: string[]) =
+    lines |> Seq.map (fun line -> line.ReplaceLineEndings()) |> Seq.chunkBySize 3
 
-let parseRucksackContentsToPrioritiesByChunk (rucksacks: seq<string []>) =
+let parseRucksackContentsToPrioritiesByChunk (rucksacks: seq<string[]>) =
     let lookupPriority value = Map.find value lettersTable
 
     rucksacks

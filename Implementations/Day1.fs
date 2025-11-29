@@ -56,28 +56,17 @@ let createElfSupplies (logger: ILogger) (lines: ListLine seq) : int seq =
     }
 
 let calculateElfSupplies (logger: ILogger) (starSwitch: StarSwitch) (lines: string seq) : Result<int, string> =
-    let elfSupplies =
-        match parseElfSuppliesInput logger lines with
-        | Ok parsedSupplies -> Ok(createElfSupplies logger parsedSupplies)
-        | Error error -> Error error
-
-    match starSwitch with
-    | StarOne ->
-        logger.LogInformation("Getting the maximum elf supplies")
-
-        match elfSupplies with
-        | Ok result ->
-            let final = result |> Seq.max
+    parseElfSuppliesInput logger lines
+    |> Result.bind (fun parsedSupplies -> Ok(createElfSupplies logger parsedSupplies))
+    |> Result.bind (fun elfSupplies ->
+        match starSwitch with
+        | StarOne ->
+            logger.LogInformation("Getting the maximum elf supplies")
+            let final = elfSupplies |> Seq.max
             logger.LogInformation("Maximum is: {Final}", final)
             Ok final
-        | Error error -> Error error
-
-    | StarTwo ->
-        logger.LogInformation("Getting the top three elf supplies")
-
-        match elfSupplies with
-        | Ok result ->
-            let final = result |> Seq.sortDescending |> Seq.take 3 |> Seq.sum
-            logger.LogInformation("Sum of top three is: {Result}", result)
-            Ok final
-        | Error error -> Error error
+        | StarTwo ->
+            logger.LogInformation("Getting the top three elf supplies")
+            let final = elfSupplies |> Seq.sortDescending |> Seq.take 3 |> Seq.sum
+            logger.LogInformation("Sum of top three is: {Final}", final)
+            Ok final)
