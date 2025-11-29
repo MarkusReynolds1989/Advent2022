@@ -3,12 +3,6 @@ module Day2
 
 // Constants
 [<Literal>]
-let test =
-    "A Y
-B X
-C Z"
-
-[<Literal>]
 let path = "day_2.txt"
 
 [<Literal>]
@@ -39,10 +33,10 @@ type RoundResult =
     | Draw
     | Win
 
-type ThrowCouple = { Left: Throw; Right: Throw }
+type ThrowMatch = { Left: Throw; Right: Throw }
 
-let calculateScore (throw: ThrowCouple) =
-    match throw with
+let calculateMatchScore: ThrowMatch -> int =
+    function
     | { Left = Rock; Right = Rock } -> tie + rockBonus
     | { Left = Rock; Right = Paper } -> win + paperBonus
     | { Left = Rock; Right = Scissors } -> loss + scissorsBonus
@@ -53,34 +47,35 @@ let calculateScore (throw: ThrowCouple) =
     | { Left = Scissors; Right = Paper } -> loss + paperBonus
     | { Left = Scissors; Right = Scissors } -> tie + scissorsBonus
 
-let matchThrowToRoundResult (throwAndRoundResult: Throw * RoundResult) : ThrowCouple =
-    throwAndRoundResult
-    |> function
-        | Rock, Lose -> { Left = Rock; Right = Scissors }
-        | Rock, Draw -> { Left = Rock; Right = Rock }
-        | Rock, Win -> { Left = Rock; Right = Paper }
-        | Paper, Lose -> { Left = Paper; Right = Rock }
-        | Paper, Draw -> { Left = Paper; Right = Paper }
-        | Paper, Win -> { Left = Paper; Right = Scissors }
-        | Scissors, Lose -> { Left = Scissors; Right = Paper }
-        | Scissors, Draw -> { Left = Scissors; Right = Scissors }
-        | Scissors, Win -> { Left = Scissors; Right = Rock }
+let matchThrowToRoundResult: Throw * RoundResult -> ThrowMatch =
+    function
+    | Rock, Lose -> { Left = Rock; Right = Scissors }
+    | Rock, Draw -> { Left = Rock; Right = Rock }
+    | Rock, Win -> { Left = Rock; Right = Paper }
+    | Paper, Lose -> { Left = Paper; Right = Rock }
+    | Paper, Draw -> { Left = Paper; Right = Paper }
+    | Paper, Win -> { Left = Paper; Right = Scissors }
+    | Scissors, Lose -> { Left = Scissors; Right = Paper }
+    | Scissors, Draw -> { Left = Scissors; Right = Scissors }
+    | Scissors, Win -> { Left = Scissors; Right = Rock }
 
 // Memoize all throws here to make the work quicker.
 let calculateAllScores throws =
     // There are very few correct states, so the memoization will be extremely fast for this problem.
     let result =
         Seq.fold
-            (fun (state: Map<ThrowCouple, int> * int) (throw: ThrowCouple) ->
+            (fun (state: Map<ThrowMatch, int> * int) (throw: ThrowMatch) ->
                 match Map.containsKey throw (fst state) with
                 | true -> (fst state, (snd state) + Map.find throw (fst state))
-                | _ -> (Map.add throw (calculateScore throw) (fst state)), ((snd state) + (calculateScore throw)))
+                | _ ->
+                    (Map.add throw (calculateMatchScore throw) (fst state)),
+                    ((snd state) + (calculateMatchScore throw)))
             (Map.empty, 0)
             throws
 
     snd result
 
-let nameThrowsStarOne (lines: string seq) : seq<ThrowCouple> =
+let nameThrowsStarOne (lines: string seq) : seq<ThrowMatch> =
     let matchThrow throw =
         throw
         |> function
