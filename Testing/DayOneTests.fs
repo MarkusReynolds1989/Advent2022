@@ -1,4 +1,4 @@
-﻿module Tests
+﻿module DayOneTests
 
 open System.IO
 

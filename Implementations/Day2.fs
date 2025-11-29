@@ -1,18 +1,32 @@
-﻿module Day2
+﻿[<RequireQualifiedAccess>]
+module Day2
 
+// Constants
+[<Literal>]
 let test =
     "A Y
 B X
 C Z"
 
+[<Literal>]
 let path = "day_2.txt"
 
-// Constants
+[<Literal>]
 let win = 6
+
+[<Literal>]
 let tie = 3
+
+[<Literal>]
 let loss = 0
+
+[<Literal>]
 let scissorsBonus = 3
+
+[<Literal>]
 let paperBonus = 2
+
+[<Literal>]
 let rockBonus = 1
 
 type Throw =
@@ -64,7 +78,7 @@ let calculateAllScores throws =
 
     snd result
 
-let nameThrowsStarOne lines : seq<Throw * Throw> =
+let nameThrowsStarOne (lines: string seq) : seq<Throw * Throw> =
     let matchThrow throw =
         throw
         |> function
@@ -77,7 +91,7 @@ let nameThrowsStarOne lines : seq<Throw * Throw> =
             | _ -> failwith $"Invalid input {throw}"
 
     seq {
-        for line in (lines: string[]) do
+        for line in (lines: string seq) do
             yield (matchThrow line[0], matchThrow line[2])
     }
 
@@ -102,7 +116,7 @@ let nameThrowsStarTwo lines : seq<Throw * RoundResult> =
             | _ -> failwith "Invalid input"
 
     seq {
-        for line in (lines: string[]) do
+        for line in (lines: string seq) do
             yield (matchThrow line[0], matchRoundResult line[2])
     }
 

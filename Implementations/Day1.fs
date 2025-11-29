@@ -4,6 +4,7 @@ module Day1
 open System
 open Microsoft.Extensions.Logging
 
+[<Literal>]
 let filePath = "elf_calories.txt"
 
 type ListLine =
