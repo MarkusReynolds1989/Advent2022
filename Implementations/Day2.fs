@@ -33,7 +33,52 @@ type RoundResult =
     | Draw
     | Win
 
+type ThrowMap =
+    | A
+    | B
+    | C
+    | X
+    | Y
+    | Z
+
+type MappingStrategy = ThrowMap -> Throw option * RoundResult option
+
+type ThrowMapGroup = { Left: ThrowMap; Right: ThrowMap }
+
 type ThrowMatch = { Left: Throw; Right: Throw }
+
+let mapOpponentThrowStrategy: MappingStrategy =
+    function
+    | A -> (Some Throw.Rock, None)
+    | B -> (Some Throw.Paper, None)
+    | C -> (Some Throw.Scissors, None)
+    | X
+    | Y
+    | Z -> (None, None)
+
+let mapRoundResultStrategy: MappingStrategy =
+    function
+    | X -> (None, Some RoundResult.Lose)
+    | Y -> (None, Some RoundResult.Draw)
+    | Z -> (None, Some RoundResult.Win)
+    | A
+    | B
+    | C -> (None, None)
+
+let mapStarOneStrategy: MappingStrategy =
+    function
+    | A
+    | X -> (Some Throw.Rock, None)
+    | B
+    | Y -> (Some Throw.Paper, None)
+    | C
+    | Z -> (Some Throw.Scissors, None)
+
+let getMappingStrategy (star: Day1.StarSwitch) (isRightColumn: bool) : MappingStrategy =
+    match star, isRightColumn with
+    | Day1.StarOne, _ -> mapStarOneStrategy
+    | Day1.StarTwo, false -> mapOpponentThrowStrategy
+    | Day1.StarTwo, true -> mapRoundResultStrategy
 
 let calculateMatchScore: ThrowMatch -> int =
     function
@@ -59,33 +104,19 @@ let matchThrowToRoundResult: Throw * RoundResult -> ThrowMatch =
     | Scissors, Draw -> { Left = Scissors; Right = Scissors }
     | Scissors, Win -> { Left = Scissors; Right = Rock }
 
-// Memoize all throws here to make the work quicker.
 let calculateAllScores throws =
-    // There are very few correct states, so the memoization will be extremely fast for this problem.
-    let result =
-        Seq.fold
-            (fun (state: Map<ThrowMatch, int> * int) (throw: ThrowMatch) ->
-                match Map.containsKey throw (fst state) with
-                | true -> (fst state, (snd state) + Map.find throw (fst state))
-                | _ ->
-                    (Map.add throw (calculateMatchScore throw) (fst state)),
-                    ((snd state) + (calculateMatchScore throw)))
-            (Map.empty, 0)
-            throws
+    throws |> Seq.map calculateMatchScore |> Seq.sum
 
-    snd result
-
-let nameThrowsStarOne (lines: string seq) : seq<ThrowMatch> =
-    let matchThrow throw =
-        throw
-        |> function
-            | 'A'
-            | 'X' -> Rock
-            | 'B'
-            | 'Y' -> Paper
-            | 'C'
-            | 'Z' -> Scissors
-            | _ -> failwith $"Invalid input {throw}"
+let mapThrows (lines: string seq) : ThrowMapGroup seq =
+    let matchThrow =
+        function
+        | 'A' -> A
+        | 'X' -> X
+        | 'B' -> B
+        | 'Y' -> Y
+        | 'C' -> C
+        | 'Z' -> Z
+        | _ -> failwithf "Fails"
 
     seq {
         for line in (lines: string seq) do
@@ -94,33 +125,67 @@ let nameThrowsStarOne (lines: string seq) : seq<ThrowMatch> =
                   Right = matchThrow line[2] }
     }
 
+let nameThrowsStarOne (parsedLines: ThrowMapGroup seq) : seq<ThrowMatch> =
+    let matchThrow =
+        function
+        | A
+        | X -> Rock
+        | B
+        | Y -> Paper
+        | C
+        | Z -> Scissors
+
+    seq {
+        for throw in (parsedLines: ThrowMapGroup seq) do
+            yield
+                { Left = matchThrow throw.Left
+                  Right = matchThrow throw.Right }
+    }
+
 let nameThrowsStarTwo lines : seq<Throw * RoundResult> =
     // In this case, instead of knowing what the second throw is, we know what the finish should be.
     // Then we just match up the throw with what the throw should be and do the same thing as before.
 
-    let matchThrow throw =
-        throw
-        |> function
-            | 'A' -> Rock
-            | 'B' -> Paper
-            | 'C' -> Scissors
-            | _ -> failwith "Invalid input"
+    let matchThrow =
+        function
+        | A -> Rock
+        | B -> Paper
+        | C -> Scissors
 
-    let matchRoundResult roundResult =
-        roundResult
-        |> function
-            | 'X' -> Lose
-            | 'Y' -> Draw
-            | 'Z' -> Win
-            | _ -> failwith "Invalid input"
+    let matchRoundResult =
+        function
+        | X -> Lose
+        | Y -> Draw
+        | Z -> Win
 
     seq {
-        for line in (lines: string seq) do
-            yield (matchThrow line[0], matchRoundResult line[2])
+        for line in (lines: ThrowMapGroup seq) do
+            yield (matchThrow line.Left, matchRoundResult line.Right)
     }
 
+let mapInputLine (star: Day1.StarSwitch) (parsedLines: ThrowMapGroup seq) =
+    let mapLeft = getMappingStrategy star false
+    let mapRight = getMappingStrategy star true
+    
+    seq {
+        for throwMap in parsedLines do
+            let leftThrow = mapLeft throwMap.Left |> function (Some t, _ ) -> t | _ -> failwith "Bad left map"
+            
+            match star with
+            | Day1.StarOne ->
+               let rightThrow = mapRight throwMap.Right |> function (Some t, _ ) -> t | _ -> failwith "Bad right map"
+               yield Choice1Of2 {Left = leftThrow; Right = rightThrow}
+            | Day1.StarTwo ->
+                let requiredResult = mapRight throwMap.Right |> function (_, Some t) -> t | _ -> failwith "Bad right map"
+                yield Choice2Of2 (leftThrow, requiredResult)
+    }
+    
 let calculateScoreStarOne lines =
-    nameThrowsStarOne lines |> calculateAllScores
+    lines |> mapThrows |> nameThrowsStarOne |> calculateAllScores
 
 let calculateScoreStarTwo lines =
-    nameThrowsStarTwo lines |> Seq.map matchThrowToRoundResult |> calculateAllScores
+    lines
+    |> mapThrows
+    |> nameThrowsStarTwo
+    |> Seq.map matchThrowToRoundResult
+    |> calculateAllScores

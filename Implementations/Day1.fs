@@ -7,34 +7,34 @@ open Microsoft.Extensions.Logging
 [<Literal>]
 let filePath = "elf_calories.txt"
 
-type ListLine =
-    | End
-    | Line of int
-
 type StarSwitch =
     | StarOne
     | StarTwo
+    
+type private ListLine =
+    | End
+    | Line of int
 
-type CalculationStrategy = ILogger -> int list -> Result<int, string>
+type private CalculationStrategy = ILogger -> int list -> Result<int, string>
 
-let maxStrategy (logger: ILogger) (elfSupplies: int list) : Result<int, string> =
+let private maxStrategy (logger: ILogger) (elfSupplies: int list) : Result<int, string> =
     logger.LogInformation("Getting the maximum elf supplies")
     let final = elfSupplies |> Seq.max
     logger.LogInformation("Maximum is: {Final}", final)
     Ok final
 
-let topThreeSumStrategy (logger: ILogger) (elfSupplies: int list) : Result<int, string> =
+let private topThreeSumStrategy (logger: ILogger) (elfSupplies: int list) : Result<int, string> =
     logger.LogInformation("Getting the top three elf supplies")
     let final = elfSupplies |> Seq.sortDescending |> Seq.take 3 |> Seq.sum
     logger.LogInformation("Sum of top three is: {Final}", final)
     Ok final
 
-let getStrategy (starSwitch: StarSwitch) : CalculationStrategy =
+let private getStrategy (starSwitch: StarSwitch) : CalculationStrategy =
     match starSwitch with
     | StarOne -> maxStrategy
     | StarTwo -> topThreeSumStrategy
 
-let parseLine (logger: ILogger) (line: string) : Result<ListLine, string> =
+let private parseLine (logger: ILogger) (line: string) : Result<ListLine, string> =
     let mutable output = ref 0
 
     if String.IsNullOrWhiteSpace(line) then
@@ -48,7 +48,7 @@ let parseLine (logger: ILogger) (line: string) : Result<ListLine, string> =
                 logger.LogError(failureError)
                 Error failureError
 
-let parseElfSuppliesInput (logger: ILogger) (lines: string seq) : Result<ListLine list, string> =
+let private parseElfSuppliesInput (logger: ILogger) (lines: string seq) : Result<ListLine list, string> =
     logger.LogInformation("Parsing elf supplies list")
 
     lines
@@ -63,7 +63,7 @@ let parseElfSuppliesInput (logger: ILogger) (lines: string seq) : Result<ListLin
         (Ok [])
     |> Result.map List.rev
 
-let createElfSupplies (logger: ILogger) (lines: ListLine list) : int list =
+let private createElfSupplies (logger: ILogger) (lines: ListLine list) : int list =
     let rec loop (returnList: int list) (acc: int) (lines: ListLine list) =
         match lines with
         | head :: tail ->
