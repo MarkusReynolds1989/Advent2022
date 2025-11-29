@@ -38,5 +38,5 @@ type Day1Tests(fixture: DayTwoFixture) =
 
     [<Fact>]
     member this.``Day 2 Star 2``() =
-        let result =  Day2.calculateScoreStarTwo data
+        let result = Day2.calculateScoreStarTwo data
         Assert.Equal(10_498, result)

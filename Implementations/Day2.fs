@@ -39,17 +39,19 @@ type RoundResult =
     | Draw
     | Win
 
-let calculateScore throw =
+type ThrowCouple = { Left: Throw; Right: Throw}
+
+let calculateScore (throw: ThrowCouple) =
     match throw with
-    | Rock, Rock -> tie + rockBonus
-    | Rock, Paper -> win + paperBonus
-    | Rock, Scissors -> loss + scissorsBonus
-    | Paper, Rock -> loss + rockBonus
-    | Paper, Paper -> tie + paperBonus
-    | Paper, Scissors -> win + scissorsBonus
-    | Scissors, Rock -> win + rockBonus
-    | Scissors, Paper -> loss + paperBonus
-    | Scissors, Scissors -> tie + scissorsBonus
+    | {Left = Rock; Right = Rock} -> tie + rockBonus
+    | {Left = Rock; Right = Paper} -> win + paperBonus
+    | {Left = Rock; Right = Scissors} -> loss + scissorsBonus
+    | {Left = Paper; Right = Rock} -> loss + rockBonus
+    | {Left = Paper; Right = Paper} -> tie + paperBonus
+    | {Left = Paper; Right = Scissors} -> win + scissorsBonus
+    | {Left = Scissors; Right = Rock} -> win + rockBonus
+    | {Left = Scissors; Right = Paper} -> loss + paperBonus
+    | {Left = Scissors; Right = Scissors} -> tie + scissorsBonus
 
 let matchThrowToRoundResult (throwAndRoundResult: Throw * RoundResult) : Throw * Throw =
     throwAndRoundResult
